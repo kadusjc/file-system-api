@@ -5,7 +5,7 @@ const express = require('express')
   , gfs = require('../../lib/gridfs')
   , router  = express.Router()
 
-function options(fileId, req) {
+const options = (fileId, req) => {
   return {
     _id: fileId,
     filename: req.query.name,
@@ -18,7 +18,6 @@ function options(fileId, req) {
 }
 
 router.
-
 
   /**
    * @api {post} /v1/file Save new File into FileSystem returning its id
@@ -37,19 +36,15 @@ router.
    *    HTTP/1.1 422 Unprocessable Entity
    */
   post('/', (req, res) => {
-
     let fileId = new mongoose.Types.ObjectId()
     let writestream = gfs.createWriteStream(options(fileId, req))
-    writestream.on('close', () => {
-      return res.status(200)
-        .json({id: fileId.toString()})
-    });
-    writestream.on('error', (err) => {
-      return res.status(500)
-        .json({err: err})
-    });
-    req.pipe(writestream)
 
+    writestream.on('finish', () => res.status(200).json({
+      id: fileId.toString()
+    }))
+
+    writestream.on('error', (err) => res.sendStatus(422))
+    req.pipe(writestream)
   }).
 
   /**
@@ -66,7 +61,7 @@ router.
   get('/', (req, res) => {
 
     let fileId = mongoose.Types.ObjectId(req.query.id)
-    gfs.files.findOne({ _id: fileId}).toArray( function (err, file) {
+    gfs.files.findOne({ _id: fileId}, (err, file) => {
       res.contentType(file.contentType)
       gfs.createReadStream({_id: fileId})
         .pipe(res)
@@ -88,17 +83,13 @@ router.
    *    HTTP/1.1 422 Unprocessable Entity
    */
   delete('/:id', (req, res) => {
-
-    var options = { _id: mongoose.Types.ObjectId(req.params.id) }
+    let options = {_id: mongoose.Types.ObjectId(req.params.id)}
     gfs.remove(options, (err) => {
-      if(err) {
-        throw(422, err)
-      }
+      if (err) return res.sendStatus(422)
       return res.status(200)
-        .json({message: fileId+' deleted successfully'})
+        .json({message: `File ${req.params.id} deleted successfully`})
     })
 
   })
 
 module.exports = router
-
