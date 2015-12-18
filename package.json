@@ -1,0 +1,52 @@
+{
+  "name": "file-system-api",
+  "version": "1.0.0",
+  "description": "File system API to persist files",
+  "main": "./index.js",
+  "scripts": {
+    "start": "npm run gendoc && node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./clusters.js",
+    "test": "npm run lint && NODE_ENV=test mocha",
+    "gendoc": "apidoc -i api/ -o ./public/apidoc",
+    "lint": "eslint ."
+  },
+  "author": {
+    "name": "Carlos Eduardo Ferreiro Corrêa",
+    "email": "kadusjc@yahoo.com.br",
+    "url": "http://github.com/kadusjc"
+  },
+  "contributors": {
+    "name": "Rafael Jesus",
+    "email": "rafaelljesus86@gmail.com",
+    "url": "http://github.com/rafaeljesus"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "apidoc": "0.13.1",
+    "bitstring": "^1.0.0",
+    "bluebird": "3.0.5",
+    "body-parser": "^1.14.2",
+    "compression": "^1.6.0",
+    "connect-busboy": "0.0.2",
+    "cors": "^2.7.1",
+    "debug": "2.2.0",
+    "express": "^4.13.3",
+    "gridfs-stream": "0.5.3",
+    "helmet": "^0.15.0",
+    "koa": "1.1.2",
+    "lodash": "^3.10.1",
+    "mongoose": "4.2.6",
+    "morgan": "^1.6.1",
+    "multiparty": "^4.1.2",
+    "raw-body": "^2.1.5"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "co-mocha": "^1.1.2",
+    "eslint": "^1.9.0",
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0"
+  },
+  "engines": {
+    "node": "5.1.0"
+  }
+}
