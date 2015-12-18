@@ -39,7 +39,7 @@ router.
     let fileId = new mongoose.Types.ObjectId()
     let writestream = gfs.createWriteStream(options(fileId, req))
 
-    writestream.on('finish', () => res.status(200).json({
+    writestream.on('close', () => res.status(200).json({
       id: fileId.toString()
     }))
 
