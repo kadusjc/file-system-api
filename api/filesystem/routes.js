@@ -32,7 +32,7 @@ router.
    *    -d 'type=text/plain' \
    *    -d 'user=Kadu' \
    * @apiSuccess {json} Success
-        HTTP/1.1 200 OK {id: 5674481b8796b87420683dd3 }
+   *    HTTP/1.1 200 OK {id: 5674481b8796b87420683dd3 }
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
    */
@@ -41,10 +41,12 @@ router.
     let fileId = new mongoose.Types.ObjectId()
     let writestream = gfs.createWriteStream(options(fileId, req))
     writestream.on('close', () => {
-      return res.status(200).json({id: fileId.toString()})
+      return res.status(200)
+        .json({id: fileId.toString()})
     });
     writestream.on('error', (err) => {
-      return res.status(500).json({err: err})
+      return res.status(500)
+        .json({err: err})
     });
     req.pipe(writestream)
 
@@ -56,7 +58,7 @@ router.
    * @apiSuccess {String} id File id
    * @apiExample {json} Example usage:
    *    curl -X POST http://file-system-api/v1/file \
-   *    -d 'id=5674481b8796b87420683dd3' \   *
+   *    -d 'id=5674481b8796b87420683dd3'
    * @apiSuccess {Object} File to download
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
@@ -66,7 +68,8 @@ router.
     let fileId = mongoose.Types.ObjectId(req.query.id)
     gfs.files.findOne({ _id: fileId}).toArray( function (err, file) {
       res.contentType(file.contentType)
-      gfs.createReadStream({_id: fileId}).pipe(res)
+      gfs.createReadStream({_id: fileId})
+        .pipe(res)
     })
   }).
 
