@@ -1,10 +1,11 @@
 ## File System API
-======================
+
+[![Build Status](https://semaphoreci.com/api/v1/projects/7cb4eaff-547e-4bc3-a406-2baca6e593c9/640834/badge.svg)](https://semaphoreci.com/rafaeljesus/file-system-api)
 
 * This project is micro service to act as a file system repository
 
 ## Built with
-- [nodejs](https://https://nodejs.org) Backend is a node-v.5.1.0.
+- [nodejs](https://https://nodejs.org) Backend is a node-v.5.3.0.
 - [express](http://expressjs.com) API is a Express app. It respond to requests RESTfully in JSON.
 - [MongoDB](https://www.mongodb.com) Mongodb as a data store.
 - [MongoDB GridFS](https://docs.mongodb.org/v3.0/core/gridfs) MongoDB GridFS to store files

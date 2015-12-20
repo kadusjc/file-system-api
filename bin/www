@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const http = require('http')
+  , app = require('../app')
+  , log = require('../lib/log')
+  , port = process.env.PORT || 3005
+
+require('../lib/db')
+
+http.globalAgent.maxSockets = Infinity
+
+const server = http.Server(app)
+server.listen(port)
+server.on('error', err => log.error(`API failed to start ${err}`))
+server.on('listening', () => log.info(`API listening on ${server.address()}`))

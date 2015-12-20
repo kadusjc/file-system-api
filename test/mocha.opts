@@ -1,0 +1,4 @@
+-r ./lib/db
+--reporter spec
+--ui bdd
+--recursive

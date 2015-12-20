@@ -2,23 +2,11 @@
 
 const express = require('express')
   , mongoose = require('mongoose')
-  , gfs = require('../../lib/gridfs')
+  , GridFS = require('../../lib/gridfs')
   , router  = express.Router()
-
-const options = (fileId, req) => {
-  return {
-    _id: fileId,
-    filename: req.query.name,
-    mode: 'w',
-    content_type: req.query.type,
-    metadata: {
-      uploadedBy: req.query.user,
-    }
-  }
-}
+  , gfs = GridFS()
 
 router.
-
   /**
    * @api {post} /v1/file Save new File into FileSystem returning its id
    * @apiGroup File
@@ -29,24 +17,26 @@ router.
    *    curl -X POST http://file-system-api/v1/file \
    *    -d 'name=Text.txt' \
    *    -d 'type=text/plain' \
-   *    -d 'user=Kadu' \
+   *    -d 'metadata={
+   *         "userId": "123456"
+   *       }'
    * @apiSuccess {json} Success
    *    HTTP/1.1 200 OK {id: 5674481b8796b87420683dd3 }
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
    */
   post('/', (req, res) => {
-    let fileId = new mongoose.Types.ObjectId()
-    let writestream = gfs.createWriteStream(options(fileId, req))
+    const ws = gfs.createWriteStream({
+      filename: req.query.name,
+      /*eslint camelcase: 0*/
+      content_type: req.query.type,
+      metadata: req.query.metadata
+    })
 
-    writestream.on('close', () => res.status(200).json({
-      id: fileId.toString()
-    }))
-
-    writestream.on('error', (err) => res.sendStatus(422))
-    req.pipe(writestream)
+    ws.on('close', file => res.status(200).json(file))
+    ws.on('error', () => res.sendStatus(422))
+    req.pipe(ws)
   }).
-
   /**
    * @api {get} /v1/file Retrieves a saved file inside file system by its id
    * @apiGroup File
@@ -56,18 +46,16 @@ router.
    *    -d 'id=5674481b8796b87420683dd3'
    * @apiSuccess {Object} File to download
    * @apiErrorExample {json} Error
-   *    HTTP/1.1 422 Unprocessable Entity
+   *    HTTP/1.1 412 Precondition Failed
    */
-  get('/', (req, res) => {
-
-    let fileId = mongoose.Types.ObjectId(req.query.id)
-    gfs.files.findOne({ _id: fileId}, (err, file) => {
+  get('/:id', (req, res) => {
+    const query = {_id: mongoose.Types.ObjectId(req.params.id)}
+    gfs.files.findOne(query, (err, file) => {
+      if (err) return res.sendStatus(412)
       res.contentType(file.contentType)
-      gfs.createReadStream({_id: fileId})
-        .pipe(res)
+      gfs.createReadStream(query).pipe(res)
     })
   }).
-
   /**
    * @api {delete} /v1/file Remove a saved file inside file system by its id
    * @apiGroup File
@@ -77,19 +65,17 @@ router.
    * @apiSuccessExample {json} Success-Response:
    *    HTTP/1.1 200 OK
    *    {
-   *      "message": "File 5674481b8796b87420683dd3 deleted successfully"
+   *      "message": "OK"
    *    }
    * @apiErrorExample {json} Error
-   *    HTTP/1.1 422 Unprocessable Entity
+   *    HTTP/1.1 412 Precondition Failed
    */
   delete('/:id', (req, res) => {
-    let options = {_id: mongoose.Types.ObjectId(req.params.id)}
-    gfs.remove(options, (err) => {
+    const query = {_id: mongoose.Types.ObjectId(req.params.id)}
+    gfs.remove(query, err => {
       if (err) return res.sendStatus(422)
-      return res.status(200)
-        .json({message: `File ${req.params.id} deleted successfully`})
+      return res.status(200).json({message: 'OK'})
     })
-
   })
 
 module.exports = router
