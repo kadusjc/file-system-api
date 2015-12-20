@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const http = require('http')
-  , app = require('../app')
+  , app = require('../')
   , log = require('../lib/log')
   , port = process.env.PORT || 3005
 
