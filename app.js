@@ -1,22 +1,28 @@
 'use strict'
 
-var express = require('express')
-  , compress = require('compression')
-  , logger = require('morgan')
-  , bodyParser = require('body-parser')
-  , cors = require('cors')
-  , helmet = require('helmet')
-  , app = express()
+const koa = require('koa')
+  , kbody = require('koa-bodyparser')
+  , serve = require('koa-static')
+  , logger = require('koa-logger')
+  , compress = require('koa-compress')
+  , helmet = require('koa-helmet')
+  , cors = require('kcors')
+  , zlib = require('zlib')
+  , fsAPI = require('./api/filesystem/routes')
+  , app = koa()
 
-app.use(compress())
-app.use(logger('combined'))
+app.use(compress({
+  filter: contentType => /text/i.test(contentType)
+  , threshold: 2048
+  , flush: zlib.Z_SYNC_FLUSH
+}))
+app.use(kbody())
+app.use(logger())
 app.use(helmet())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
-
-app.use('*', cors())
-app.use('/v1/file', require('./api/filesystem/routes'))
-
-app.use(express.static(__dirname + '/public'))
+app.use(cors({
+  methods: ['POST', 'GET', 'DELETE']
+}))
+app.use(fsAPI.routes())
+app.use(serve('public'))
 
 module.exports = app

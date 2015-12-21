@@ -1,18 +1,18 @@
 'use strict'
 
-const express = require('express')
+const krouter = require('koa-router')
   , mongoose = require('mongoose')
+  , router = krouter()
   , gfs = require('../../lib/gridfs')
-  , router  = express.Router()
 
-const options = (fileId, req) => {
+const options = (fileId, query) => {
   return {
     _id: fileId,
-    filename: req.query.name,
+    filename: query.name,
     mode: 'w',
-    content_type: req.query.type,
+    content_type: query.type,
     metadata: {
-      uploadedBy: req.query.user,
+      uploadedBy: query.user,
     }
   }
 }
@@ -35,16 +35,17 @@ router.
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
    */
-  post('/', (req, res) => {
+  post('/', function *() {
     let fileId = new mongoose.Types.ObjectId()
-    let writestream = gfs.createWriteStream(options(fileId, req))
+    let writestream = gfs.createWriteStream(options(fileId, this.request.query))
 
-    writestream.on('close', () => res.status(200).json({
-      id: fileId.toString()
-    }))
+    writestream.on('close', () => {
+      this.status = 200,
+      this.body = {id: fileId.toString()}
+    })
 
-    writestream.on('error', (err) => res.sendStatus(422))
-    req.pipe(writestream)
+    writestream.on('error', (err) => this.status = 422)
+    this.pipe(writestream)
   }).
 
   /**
@@ -58,13 +59,13 @@ router.
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
    */
-  get('/', (req, res) => {
+  get('/', function *() {
 
-    let fileId = mongoose.Types.ObjectId(req.query.id)
+    let fileId = mongoose.Types.ObjectId(this.request.query.id)
     gfs.files.findOne({ _id: fileId}, (err, file) => {
-      res.contentType(file.contentType)
+      this.type = file.contentType
       gfs.createReadStream({_id: fileId})
-        .pipe(res)
+        .pipe(this)
     })
   }).
 
@@ -82,12 +83,12 @@ router.
    * @apiErrorExample {json} Error
    *    HTTP/1.1 422 Unprocessable Entity
    */
-  delete('/:id', (req, res) => {
-    let options = {_id: mongoose.Types.ObjectId(req.params.id)}
+  delete('/:id', function *() {
+    let options = {_id: mongoose.Types.ObjectId(this.request.query.id)}
     gfs.remove(options, (err) => {
-      if (err) return res.sendStatus(422)
-      return res.status(200)
-        .json({message: `File ${req.params.id} deleted successfully`})
+      if (err) return this.status = 422
+      this.status = 200;
+      this.body = { message: `File ${req.params.id} deleted successfully` }
     })
 
   })

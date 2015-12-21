@@ -6,17 +6,7 @@ const http = require('http')
 
 require('../lib/db')
 
-var listenServer = function() {
-  server.listen(port)
-  server.on('error', onError)
-  server.on('listening', onListening)
-}
-
-var onListening = function() {
-  var addr = server.address()
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
-  log.info('Listening on', bind)
-}
-
+http.globalAgent.maxSockets = Infinity
+http.createServer(app.callback())
 app.listen(port)
 console.log(`File System API - port ${port}`)
