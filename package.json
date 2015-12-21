@@ -22,11 +22,8 @@
   "license": "MIT",
   "dependencies": {
     "apidoc": "0.13.1",
-    "bitstring": "^1.0.0",
-    "bluebird": "3.0.5",
     "body-parser": "^1.14.2",
     "compression": "^1.6.0",
-    "connect-busboy": "0.0.2",
     "cors": "^2.7.1",
     "debug": "2.2.0",
     "express": "^4.13.3",
@@ -36,7 +33,6 @@
     "lodash": "^3.10.1",
     "mongoose": "4.2.6",
     "morgan": "^1.6.1",
-    "multiparty": "^4.1.2",
     "raw-body": "^2.1.5"
   },
   "devDependencies": {
