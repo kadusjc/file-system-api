@@ -1,7 +1,7 @@
 'use strict'
 
 const koa = require('koa')
-  , kbody = require('koa-bodyparser')
+  , kbody = require('koa-body')
   , serve = require('koa-static')
   , logger = require('koa-logger')
   , compress = require('koa-compress')

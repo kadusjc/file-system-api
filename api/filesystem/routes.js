@@ -45,7 +45,7 @@ router.
     })
 
     writestream.on('error', (err) => this.status = 422)
-    this.pipe(writestream)
+    this.request.pipe(writestream)
   }).
 
   /**
