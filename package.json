@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "apidoc": "0.14.0",
-    "bunyan": "1.5.1",
+    "bunyan": "^1.5.1",
     "compression": "1.6.0",
     "cors": "2.7.1",
     "debug": "2.2.0",
