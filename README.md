@@ -1,6 +1,6 @@
 ## File System API
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/7cb4eaff-547e-4bc3-a406-2baca6e593c9/640834/badge.svg)](https://semaphoreci.com/rafaeljesus/file-system-api)
+[![Build Status](https://semaphoreci.com/api/v1/projects/78f04a15-7695-446c-a570-5316d8a4f63a/643023/badge.svg)](https://semaphoreci.com/rafaeljesus/file-system-api)
 
 * This project is micro service to act as a file system repository
 
