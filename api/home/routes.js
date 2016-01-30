@@ -1,7 +1,7 @@
 'use strict'
 
 const express = require('express')
-  , router = express.Router()
+const router = express.Router()
 
 /**
  * @api {get} / API Status

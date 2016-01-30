@@ -1,13 +1,14 @@
 'use strict'
 
 const express = require('express')
-  , compress = require('compression')
-  , logger = require('morgan')
-  , cors = require('cors')
-  , helmet = require('helmet')
-  , APIHome = require('./api/home/routes')
-  , APIFile = require('./api/file-system/routes')
-  , app = express()
+const compress = require('compression')
+const logger = require('morgan')
+const cors = require('cors')
+const helmet = require('helmet')
+const app = express()
+
+const APIHome = require('./api/home/routes')
+const APIFile = require('./api/file-system/routes')
 
 app.use(compress())
 app.use(logger('combined'))

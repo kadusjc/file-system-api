@@ -1,10 +1,13 @@
 'use strict'
 
 const express = require('express')
-  , mongoose = require('mongoose')
-  , GridFS = require('../../lib/gridfs')
-  , router  = express.Router()
-  , gfs = GridFS()
+const router  = express.Router()
+
+const mongoose = require('mongoose')
+const GridFS = require('../../lib/gridfs')
+const gfs = GridFS()
+
+module.exports = router
 
 router.
   /**
@@ -76,8 +79,6 @@ router.
     const query = {_id: mongoose.Types.ObjectId(req.params.id)}
     gfs.remove(query, err => {
       if (err) return res.sendStatus(422)
-      return res.status(200).json({message: 'OK'})
+      res.status(200).json({message: 'OK'})
     })
   })
-
-module.exports = router
